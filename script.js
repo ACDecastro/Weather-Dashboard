@@ -1,27 +1,30 @@
 $(document).ready(function () {
     
-    //Search for city forecast if search button is clicked
-    $("#searchButton").on("click", function () {
+
+  });
+
+      //Search for city forecast if search button is clicked
+      $("#searchButton").on("click", function () {
         var searchCity = $("#search").val();
         $("#search").val("");
         weatherForecast(searchCity);
         fiveDayForecast(searchCity);
-      });
+    });
 
     //Search for city forecast if enter is pressed
     var input = document.getElementById("search");
     input.addEventListener("keyup", function (event) {
-      if (event.keyCode === 13) {
+      if (event.key === 'Enter') {
         event.preventDefault();
         document.getElementById("searchButton").click();
       }
     });
 
-    // local storage
+    // get data from local storage
     var saveCity = JSON.parse(localStorage.getItem("history")) || [];
   
     if (saveCity.length > 0) {
-      weatherFunction(saveCity[saveCity.length - 1]);
+      weatherForecast(saveCity[saveCity.length - 1]);
     }
     for (var i = 0; i < saveCity.length; i++) {
       createList(saveCity[i]);
@@ -31,12 +34,12 @@ $(document).ready(function () {
       var listCity = $("<li>").addClass("list-group-item").text(city);
       $(".history").append(listCity);
     }
-    // create list on click//
+    // create list on click
     $(".history").on("click", "li", function () {
       weatherForecast($(this).text());
       fiveDayForecast($(this).text());
     });
-    //function for clear button to remove serached city from list and reload fresh page// 
+    //Clear button removes searched city from list and reload fresh page// 
     function clear() {
       $(".history").empty();
       document.location.reload();
@@ -48,21 +51,21 @@ $(document).ready(function () {
     });
   
     var apiKey = "6df536e3d2d547ddea7951e36599bff4"
-    //Function for current weather
+    //Function for current weather for city searched for by the user
     function weatherForecast(searchCity) {
-      //API to get current weather//
+      //API to get current weather
       $.ajax({
         type: "GET",
         url: "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=" + apiKey + "&units=imperial",
       }).then(function (data) {
         if (saveCity.indexOf(searchCity) === -1) {
           saveCity.push(searchCity);
-          localStorage.setItem("saveCity", JSON.stringify(saveCity));
+          localStorage.setItem("history", JSON.stringify(saveCity));
           createList(searchCity);
         }
         $("#current").empty();
   
-  
+        //Creating html elements
         var cardForecast = $("<div>").addClass("card");
         var cardBodyForecast = $("<div>").addClass("card-body");
         var title = $("<h3>").addClass("card-title").text(data.name + " (" + new Date().toLocaleDateString() + ")");
@@ -71,12 +74,12 @@ $(document).ready(function () {
         var temp = $("<p>").addClass("card-text").text("Temperature: " + data.main.temp + " °F");
         var img = $("<img>").attr("src", "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png");
   
-        var lon = data.coord.lon;
-        var lat = data.coord.lat;
+        var longitude = data.coord.lon;
+        var latitude = data.coord.lat;
         //API get data for UV intensity
         $.ajax({
           type: "GET",
-          url: "https://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + lat + "&lon=" + lon,
+          url: "https://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude,
   
         }).then(function (response) {
           
@@ -86,7 +89,7 @@ $(document).ready(function () {
           var uvIndex = $("<p>").addClass("card-text").text("UV Index: ");
           var btn = $("<span>").addClass("btn btn-sm").text(uvResponse);
   
-          //will give the UV a color indicator low, moderate or high
+          //will give the UV a color indicator low, moderate, or high
           if (uvResponse < 3) {
             btn.addClass("btn-success");
           } else if (uvResponse > 6) {
@@ -140,4 +143,3 @@ $(document).ready(function () {
         }
       });
     }
-  });

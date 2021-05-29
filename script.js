@@ -1,6 +1,9 @@
 $(document).ready(function () {
-    
-
+    //On load, display the current weather and 5-day forecast of the first city in the search history list
+    if(saveCity.length>0){
+        weatherForecast(JSON.parse(localStorage.getItem("history"))[0]);
+        fiveDayForecast(JSON.parse(localStorage.getItem("history"))[0]);
+    }
 });
 
 //Search for city forecast if search button is clicked
@@ -20,12 +23,9 @@ input.addEventListener("keyup", function (event) {
     }
 });
 
-// get data from local storage
+// get data from local storage and display past cities in the history list.
 var saveCity = JSON.parse(localStorage.getItem("history")) || [];
 
-if (saveCity.length > 0) {
-    weatherForecast(saveCity[saveCity.length - 1]);
-}
 for (var i = 0; i < saveCity.length; i++) {
     createList(saveCity[i]);
 }

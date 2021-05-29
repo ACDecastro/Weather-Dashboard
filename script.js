@@ -76,6 +76,7 @@ function weatherForecast(searchCity) {
 
     var longitude = data.coord.lon;
     var latitude = data.coord.lat;
+
     //API get data for UV intensity
     $.ajax({
         type: "GET",
@@ -83,7 +84,6 @@ function weatherForecast(searchCity) {
 
     }).then(function (response) {
         
-
         //var uvColor;
         var uvResponse = response.value;
         var uvIndex = $("<p>").addClass("card-text").text("UV Index: ");
@@ -119,27 +119,27 @@ function fiveDayForecast(searchCity) {
     url: "https://api.openweathermap.org/data/2.5/forecast?q=" + searchCity + "&appid=" + apiKey + "&units=imperial",
     }).then(function (data) {
     
-    var results = data.list
+        var results = data.list
 
-    $("#fiveDay").html("<h4>5-Day Forecast:   </h4></br>").append("<div class=\"row\">");
+        $("#fiveDay").html("<h4>5-Day Forecast:   </h4></br>").append("<div class=\"row\">");
 
-    for (var i = 0; i < results.length; i++) {
+        for (var i = 0; i < results.length; i++) {
 
-        if (results[i].dt_txt.indexOf("12:00:00") !== -1) {
+            if (results[i].dt_txt.indexOf("12:00:00") !== -1) {
 
-        var columnFive = $("<div>").addClass("col-md-2");
-        var card = $("<div>").addClass("card bg-info text-white");
-        var cardBody = $("<div>").addClass("card-body p-2")
-        var dateCard = $("<h5>").addClass("card-title").text(new Date(results[i].dt_txt).toLocaleDateString());
-        var temperature = $("<p>").addClass("card-text forecastTemp").text("Temperature: " + results[i].main.temp + " °F");
-        var humidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
-        var image = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png");
-        //Assemble card components and attach it to the column
-        columnFive.append(card.append(cardBody.append(dateCard, image, humidity, temperature)));
+            var columnFive = $("<div>").addClass("col-md-2");
+            var card = $("<div>").addClass("card bg-info text-white");
+            var cardBody = $("<div>").addClass("card-body p-2")
+            var dateCard = $("<h5>").addClass("card-title").text(new Date(results[i].dt_txt).toLocaleDateString());
+            var temperature = $("<p>").addClass("card-text forecastTemp").text("Temperature: " + results[i].main.temp + " °F");
+            var humidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
+            var image = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png");
+            //Assemble card components and attach it to the column
+            columnFive.append(card.append(cardBody.append(dateCard, image, humidity, temperature)));
 
-        $("#fiveDay").append(columnFive);
+            $("#fiveDay").append(columnFive);
 
+            }
         }
-    }
     });
 }
